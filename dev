@@ -1,0 +1,7 @@
+#! /bin/bash
+
+case $1 in
+run) streamlit run app/Home.py ;;
+build) python src/Builder.py ;;
+*) echo "Comando não encontrado" ;;
+esac
