@@ -23,6 +23,7 @@ Ambiente visual, amigável ao usuário para exploração e interação com o mod
 
 - [Playground](https://brunoht-dex-avenue-apphome-3nxg0e.streamlit.app/)
 - [API](#Demo)
+- [API Docs](#Demo)
 
 ## Créditos
 
@@ -61,9 +62,19 @@ Cria o binário do modelo implementado
 bash dev build
 ```
 
+### Serve
+
+Serve a aplicação através da API
+
+```bash
+bash dev serve
+```
+
 ## Estrutura do Projeto
 
 - .docs: reúne todos os documentos, manuais, anotações referentes às implementações do projeto
+- api: arquivos do FastAPI
+    - app.py: arquivo principal do serviço de REST API
 - app: arquivos do Streamlit
     - Home: página principal do Playground
 - config: configurações utilizadas para a fase de desenvolvimento do projeto
@@ -81,6 +92,51 @@ bash dev build
 - readme.md: arquivo com informações sobre o projeto
 - requirements.txt: utilizado para preparar o ambiente virtual do Python, instalando as bibliotecas necessárias para implementação do código fonte e para o uso nos notebooks
 
+## Instruçẽos para desenvolvedores
+
+### Carregar o modelo
+
+Antes de executar qualquer operação do recomendadador é 
+necessário carregar uma instância do modelo:
+
+```python
+with open(models_path('main.pkl'), 'rb') as file:
+    recommender = pickle.load(file)
+    model, item_list, users_list = recommender.fit()
+```
+
+### Obter lista de usuários
+
+```python
+users = users_list.tolist()
+```
+
+#### Converter lista em Dataset
+
+```python
+users = pd.Series(users_list.tolist())
+```
+
+#### Controlar o número de resultados a serem exibidos
+
+```python
+users = pd.Series(users_list.tolist())
+users = users.head(int(limit)).tolist()
+```
+
+## Recomendação
+
+```python
+target = recommender.get_target(account_id)
+recommendation = recommender.recommend(model, target)
+
+if recommendation is not None:    
+    type = 'covisitation'
+    recommendation_list = recommendation.tolist()
+else: 
+    type = 'top_n'
+    recommendation_list = recommender.recommend_top_n_consumptions(recommender.get_data(), n=10).Symbol.tolist()
+```
 ## Metodologias
 
 - [CRISP-DM](https://www.escoladnc.com.br/blog/data-science/metodologia-crisp-dm/)

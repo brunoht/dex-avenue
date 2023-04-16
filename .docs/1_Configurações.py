@@ -1,7 +1,5 @@
 import streamlit as st
 
-title = "Configurações | DEX Avenue Playground"
-
 st.set_page_config(
     page_title="Configurações | DEX Avenue Playground"
 )
