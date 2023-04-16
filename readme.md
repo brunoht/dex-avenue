@@ -22,8 +22,8 @@ Ambiente visual, amigável ao usuário para exploração e interação com o mod
 ## Demo
 
 - [Playground](https://brunoht-dex-avenue-apphome-3nxg0e.streamlit.app/)
-- [API](#Demo)
-- [API Docs](#Demo)
+- [API](https://dex-avenue.dexavenue.repl.co)
+- [API Docs](https://dex-avenue.dexavenue.repl.co/docs)
 
 ## Créditos
 
