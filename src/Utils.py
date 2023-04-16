@@ -11,3 +11,9 @@ def data_path(filename, mode = 'src'):
     return os.path.dirname(os.path.abspath(__file__)) + '/../data/' + filename
   else:
     return '../data/' + filename
+  
+def response(data = {}, success = True):
+  return {
+    'success': success,
+    'data': data
+  }

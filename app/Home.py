@@ -1,11 +1,9 @@
-import streamlit as st
-import pickle
-import pandas as pd
-
-# adiciona o acesso ao diretório src
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../src')
 
+import pickle
+import pandas as pd
+import streamlit as st
 from Utils import *
 
 ## -- Page Settings -- ##

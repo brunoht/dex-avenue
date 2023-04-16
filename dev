@@ -2,6 +2,7 @@
 
 case $1 in
 run) streamlit run app/Home.py ;;
+serve) python api/app.py run ;;
 build) python src/Builder.py ;;
 *) echo "Comando não encontrado" ;;
 esac

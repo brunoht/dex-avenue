@@ -66,6 +66,7 @@ class Recommender:
     
     def get_target(self, account_id):
         result = self.data.query('AccountID == @account_id')
+        if result.size == 0: return None
         return result.sort_values('Date', ascending=False)['Symbol'].values[0]
     
     def get_data(self):
