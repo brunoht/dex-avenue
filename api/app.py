@@ -4,7 +4,9 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../src')
 import pickle
 import uvicorn
 import pandas as pd
+from pathlib import Path
 from fastapi import FastAPI
+from dotenv import load_dotenv
 from Utils import response, models_path
 
 app = FastAPI()
@@ -55,6 +57,18 @@ with open(models_path('main.pkl'), 'rb') as file:
             'type': type,
             'recommendation': recommendation_list
         })
-        
+
+
 if __name__ == '__main__':
-    uvicorn.run(app)
+    
+    dotenv_path = Path(
+        os.path.dirname(os.path.abspath(__file__)) + '/../.env'
+    )
+
+    load_dotenv(dotenv_path)
+    
+    uvicorn.run(
+        app, 
+        host = os.getenv('HOST'), 
+        port = int(os.getenv('PORT'))
+    )
