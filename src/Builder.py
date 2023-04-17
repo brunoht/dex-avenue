@@ -1,7 +1,7 @@
 import pickle
 import pandas as pd
 from Recommender import Recommender
-from Utils import *
+from Utils import data_path, models_path
 
 files = {
     'train_sheet': '2023_03_03 - Ordens DNC.xlsx',

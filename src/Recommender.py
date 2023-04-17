@@ -4,24 +4,46 @@ from collections import Counter
 
 class Recommender:
   
+    # constructor
     def __init__(self, data, item_id, user_id, rating):
         self.data = data.copy()
         self.item_id = item_id
         self.user_id = user_id
         self.rating = rating
+        
+    # data getter
+    def get_data(self):
+        return self.data
     
+    # get the user's latest purchased product
+    def get_target(self, account_id):
+        result = self.data.query('AccountID == @account_id')
+        if result.size == 0: return None
+        return result.sort_values('Date', ascending=False)['Symbol'].values[0]
+        
+    # fit model
     def fit(self, n_most_popular=10):
         G = nx.Graph()
         G.add_nodes_from(self.data['Symbol'].unique(), node_type='item')
         G.add_nodes_from(self.data['AccountID'].unique(), node_type='user')
         G.add_weighted_edges_from(self.data[['Symbol', 'AccountID', 'FrequenciaSymbol']].values)
-
         items_list_ = self.data['Symbol'].unique()
-        
         users_list_ = self.data['AccountID'].unique()
-
         return G, items_list_, users_list_
-        
+    
+    # runs top n recommendation
+    def recommend_top_n_consumptions(self, ratings:pd.DataFrame, n:int) -> pd.DataFrame:
+        recommendations = (
+            ratings
+            .groupby('Symbol')
+            .count()['AccountID']
+            .reset_index()
+            .rename({'AccountID': 'score'}, axis=1)
+            .sort_values(by='score', ascending=False)
+        )
+        return recommendations.head(n)
+    
+    # runs covisitation recommendation
     def recommend(self, G, target_item, max_recommendations=10):
         try:
             covisitation = self.recommend_neighbor_items(G, target_item, max_recommendations).drop(target_item, axis=0).index
@@ -29,7 +51,7 @@ class Recommender:
         except KeyError as e:
             print(f'\033[1m{target_item}\033[0;0m is not included in the recommendation matrix.\n')
     
-      
+    # covisitation auxiliary algorithm
     def recommend_neighbor_items(self, G:nx.Graph, target_id, max_recommendations=10):
         
         # Validando tipo do nó
@@ -52,22 +74,3 @@ class Recommender:
         df_neighbors = df_neighbors.sort_values(by='score', ascending=False).set_index('item_id')
 
         return df_neighbors.head(max_recommendations)
-    
-    def recommend_top_n_consumptions(self, ratings:pd.DataFrame, n:int) -> pd.DataFrame:
-        recommendations = (
-            ratings
-            .groupby('Symbol')
-            .count()['AccountID']
-            .reset_index()
-            .rename({'AccountID': 'score'}, axis=1)
-            .sort_values(by='score', ascending=False)
-        )
-        return recommendations.head(n)
-    
-    def get_target(self, account_id):
-        result = self.data.query('AccountID == @account_id')
-        if result.size == 0: return None
-        return result.sort_values('Date', ascending=False)['Symbol'].values[0]
-    
-    def get_data(self):
-        return self.data
