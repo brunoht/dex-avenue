@@ -60,7 +60,6 @@ with open(models_path('main.pkl'), 'rb') as file:
 
 
 if __name__ == '__main__':
-    
     uvicorn.run(
         app, 
         host = env('HOST'), 
