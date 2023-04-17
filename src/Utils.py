@@ -1,14 +1,17 @@
 import os
-from pathlib import Path
-from dotenv import load_dotenv
 
 # Load environment variables
 
 try:
+  from pathlib import Path
+  from dotenv import load_dotenv
+  
   dotenv_path = Path(
       os.path.dirname(os.path.abspath(__file__)) + '/../.env'
   )
+  
   with open(dotenv_path, 'r'): load_dotenv(dotenv_path)
+  
   use_dotenv = True
 except:
   use_dotenv = False
