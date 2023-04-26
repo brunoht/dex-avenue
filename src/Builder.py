@@ -55,7 +55,7 @@ recommender = Recommender(
 )
 
 # Train recommender
-model, item_list, users_list = recommender.fit()
+model, item_list, users_list = recommender.fit(min = 0.05)
 
 # Save recommender
 with open(models_path('main.pkl'), 'wb') as model_file:

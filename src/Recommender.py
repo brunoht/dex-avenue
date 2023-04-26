@@ -22,7 +22,8 @@ class Recommender:
         return result.sort_values('Date', ascending=False)['Symbol'].values[0]
         
     # fit model
-    def fit(self, n_most_popular=10):
+    def fit(self, n_most_popular=10, min = 0.05):
+        self.data = self.data.query('FrequenciaSymbol >= @min')
         G = nx.Graph()
         G.add_nodes_from(self.data['Symbol'].unique(), node_type='item')
         G.add_nodes_from(self.data['AccountID'].unique(), node_type='user')
@@ -44,9 +45,21 @@ class Recommender:
         return recommendations.head(n)
     
     # runs covisitation recommendation
-    def recommend(self, G, target_item, max_recommendations=10):
+    def recommend(self, G, target_item, max_recommendations=10, drop = True):
         try:
-            covisitation = self.recommend_neighbor_items(G, target_item, max_recommendations).drop(target_item, axis=0).index
+            if drop == True:
+                if target_item in self.recommend_neighbor_items(G, target_item, max_recommendations).index:
+                    covisitation = self.recommend_neighbor_items(G, target_item, max_recommendations+1).drop(target_item, axis=0).index
+                else:
+                    covisitation = self.recommend_neighbor_items(G, target_item, max_recommendations).index
+            else:
+                covisitation = self.recommend_neighbor_items(G, target_item, max_recommendations).index
+            
+            if len(covisitation) < max_recommendations:
+                n = max_recommendations - len(covisitation)
+                lista = self.recommend_top_n_consumptions(self.get_data(), n = n).set_index('Symbol')
+                covisitation = covisitation.append(lista.index)
+
             return covisitation          
         except KeyError as e:
             print(f'\033[1m{target_item}\033[0;0m is not included in the recommendation matrix.\n')
@@ -72,5 +85,6 @@ class Recommender:
         df_neighbors = pd.DataFrame(zip(consumed_items_count.keys(), consumed_items_count.values()))
         df_neighbors.columns = ['item_id', 'score']
         df_neighbors = df_neighbors.sort_values(by='score', ascending=False).set_index('item_id')
+
 
         return df_neighbors.head(max_recommendations)

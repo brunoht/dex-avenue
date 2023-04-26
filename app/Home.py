@@ -29,12 +29,15 @@ with open (models_path('main.pkl'), 'rb') as file:
   ## -- Parameters -- ##
   
   users_limit = st.number_input('Número de clientes', min_value=5, max_value=100, value=5)
+
+  n_recommendations = st.number_input('Número de recomendações', min_value=5, max_value=20, value=10)
   
   account_id = st.selectbox('Selecione um cliente [Account ID]', users.head(users_limit).tolist())
 
   target = recommender.get_target(account_id)
   
-  result = recommender.recommend(model, target)
+  result = recommender.recommend(model, target, max_recommendations=n_recommendations, drop = False)
+
   
   ## -- Model Result -- ##
   
