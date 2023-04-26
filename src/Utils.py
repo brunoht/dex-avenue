@@ -1,6 +1,5 @@
 import os
 
-
 # Load environment variables (Replit's workaround)
 try:
   from pathlib import Path
