@@ -5,7 +5,13 @@ import pickle
 import uvicorn
 import pandas as pd
 from fastapi import FastAPI
+from pydantic import BaseModel
 from Utils import response, models_path, env
+
+class RecommendParams(BaseModel):
+    account_id: str
+    max_recommendations: int | None = 10
+    drop: bool | None = True
 
 # Application
 
@@ -37,12 +43,18 @@ with open(models_path('main.pkl'), 'rb') as file:
         })
 
     # GET Recommend
-    @app.get("/recommend/{account_id}")
-    def recommend(account_id):
+    @app.post("/recommend/")
+    def recommend(params: RecommendParams):
+        account_id = params.account_id
         target = recommender.get_target(account_id)
         if target is None: return response(success=False)
         
-        recommendation = recommender.recommend(model, target)
+        recommendation = recommender.recommend(
+            model, 
+            target, 
+            max_recommendations = params.max_recommendations, 
+            drop = params.drop
+        )
         
         if recommendation is not None:    
             type = 'covisitation'
