@@ -57,7 +57,7 @@ with open(models_path('main.pkl'), 'rb') as file:
         )
         
         if recommendation is not None:    
-            type = 'covisitation'
+            type = 'covisitation' #
             recommendation_list = recommendation.tolist()
         else: 
             type = 'top_n'
